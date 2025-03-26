@@ -23,7 +23,7 @@ const GameOver: React.FC = () => {
         </article>
         <article className="game-over__content">
           <p className="game-over__text">
-            {gameOver.guessedWord ? "¡Felicitaciones! ¡Has conseguido la palabra!" : "Parece que no lo comseguiste 😿."}
+            {gameOver.guessedWord ? "¡Felicitaciones! ¡Has conseguido la palabra!" : "Parece que no lo conseguiste 😿."}
           </p>
           <h3 className="game-over__subtext">
             La palabra era: {correctWord}
