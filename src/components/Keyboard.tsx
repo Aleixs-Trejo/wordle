@@ -46,7 +46,7 @@ const Keyboard: React.FC = () => {
   }, [handleKeyboard]);
 
   return(
-    <section className="section__keyboard">
+    <section className="section__keyboard" translate="no">
       <div className="keyboard__content">
         <article className="keyboard__row">
           {keys1.map((key: Char, index: number) => (

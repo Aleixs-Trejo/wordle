@@ -47,6 +47,9 @@ const Key: React.FC<KeyProps> = ({ keyVal, icon }) => {
       className={`flex-c-c keyboard__key ${icon ? 'keyboard__key--icon' : ''} ${keyClass}`}
       onClick={selectLetter}
       disabled={keyVal ? disabledLetters.includes(keyVal) : false}
+      translate="no"
+      lang="zxx"
+      data-translate="no"
     >
       {icon ? icon : keyVal}
     </button>
