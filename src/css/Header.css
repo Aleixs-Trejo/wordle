@@ -1,0 +1,12 @@
+.app__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.app__subtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}

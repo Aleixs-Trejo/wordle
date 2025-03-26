@@ -1,0 +1,55 @@
+.section__board {
+  width: 70%;
+  max-width: 15rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.board__row {
+  display: flex;
+  width: 100%;
+  gap: 0.25rem;
+}
+
+.clue__container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 80%;
+  max-width: max-content;
+  margin-inline: auto;
+  background-color: #45475a;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  border: thin solid #f1f1f1;
+  font-size: 1rem;
+  transform: translateY(-100%);
+  transition: transform 0.5s ease;
+
+  &.clue__container--show {
+    animation: clue-hide 4s ease;
+  }
+}
+
+.clue {
+  color: #f1f1f1;
+  text-align: center;
+}
+
+@keyframes clue-hide {
+  0% {
+    transform: translateY(-100%);
+  }
+  20% {
+    transform: translateY(5rem);
+  }
+  80% {
+    transform: translateY(5rem);
+  }
+  100% {
+    transform: translateY(-150%);
+  }
+}

@@ -1,0 +1,28 @@
+.letter {
+  flex: 1;
+  aspect-ratio: 1/1;
+  border: 2px solid #414458;
+  border-radius: 0.5rem;
+  font-size: clamp(0.75rem, 6vw, 1.625rem);
+  font-weight: 400;
+  color: var(--text-color-primary);
+  text-align: center;
+  user-select: none;
+
+  &.letter__letter {
+    animation: letter-scale 0.2s ease;
+    border-color: #8c90a8;
+  }
+
+  &.letter--error {
+    animation: flip-error 0.2s ease var(--delay, 0ms) forwards;
+  }
+  
+  &.letter--almost {
+    animation: flip-almost 0.2s ease var(--delay, 0ms) forwards;
+  }
+  
+  &.letter--correct {
+    animation: flip-correct 0.2s ease var(--delay, 0ms) forwards;
+  }
+}
