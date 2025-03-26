@@ -112,7 +112,7 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     if (letterPos < 5) return;
     
     const currentWord: string = board[attemp].join("");
-  
+
     if (!wordSet.has(currentWord)) {
       alert("No existe en la lista de palabras del juego");
       return;
@@ -128,24 +128,34 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     }
 
     const newDisabledLetters: Char[] = [];
+    const newCorrectLetters = new Set(correctLetters);
+    const newAlmostLetters = new Set(almostLetters);
+
+    // Verificar letras correctas
     board[attemp].forEach((letter, index) => {
-      if (correctWord[index] === letter) realWordMap[letter]--;
+      if (correctWord[index] === letter) {
+        newCorrectLetters.add(letter);
+        realWordMap[letter]--;
+      }
     });
 
     board[attemp].forEach((letter, index) => {
-      if (correctWord[index] === letter) return;
-      if (correctWord.includes(letter) && realWordMap[letter] > 0) {
-        realWordMap[letter]--;
-      } else {
-        newDisabledLetters.push(letter);
+      if (correctWord[index] !== letter) {
+        if (correctWord.includes(letter) && realWordMap[letter] > 0) {
+          newAlmostLetters.add(letter)
+          realWordMap[letter]--;
+        } else if (!newCorrectLetters.has(letter) && !newAlmostLetters.has(letter)) {
+          newDisabledLetters.push(letter);
+        }
       }
     })
 
     checkWord();
-
+    
     const updatedDisabledLetters = new Set([...disabledLetters, ...newDisabledLetters]);
-
+    
     setDisabledLetters([...updatedDisabledLetters]);
+
     console.log("Nuevas letras deshabilitados: ", newDisabledLetters);
     console.log("Total letras deshabilitadas: ", updatedDisabledLetters);
 
