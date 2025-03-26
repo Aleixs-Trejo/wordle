@@ -141,8 +141,6 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     setDisabledLetters([]);
   };
 
-  console.log("correctWord", correctWord);
-
   const value = { board, setBoard, currentAttemp, setCurrentAttemp, nextLetter, deleteLetter, nextAttemp, correctWord, disabledLetters, gameOver, setGameOver, resetGame };
 
   return (
