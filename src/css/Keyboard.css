@@ -34,6 +34,17 @@
   width: 8vw;
   max-width: 2.5rem;
   font-size: clamp(0.75rem, 3.5vw, 1rem);
+  transition: all 0.3s ease;
+
+  &.key--correct {
+    background-color: #0e631f;
+    border-color: #0e631f;
+  }
+
+  &.key--almost{ 
+    background-color: #63610e;
+    border-color: #63610e;
+  }
 
   &.keyboard__key--icon {
     min-width: 2rem;

@@ -1,5 +1,9 @@
 .main__content{
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
+
+  &:has(.section__game-over) {
+    gap: 0.5rem;
+  }
 }

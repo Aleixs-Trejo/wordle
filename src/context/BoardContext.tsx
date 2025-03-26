@@ -31,6 +31,9 @@ interface BoardContextType {
   gameOver: GameOverType;
   setGameOver: React.Dispatch<React.SetStateAction<GameOverType>>;
   resetGame: () => void;
+  correctLetters: Char[];
+  almostLetters: Char[];
+  checkWord: () => void;
 }
 
 interface CurrentAttempType {
@@ -61,6 +64,9 @@ const boardInitialState: BoardContextType = {
   gameOver: gameOverInitialState,
   setGameOver: () => {},
   resetGame: () => {},
+  correctLetters: [],
+  almostLetters: [],
+  checkWord: () => {}
 };
 
 const BoardContext = createContext<BoardContextType>(boardInitialState);
@@ -72,6 +78,8 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
   const [disabledLetters, setDisabledLetters] = useState<Char[]>([]);
   const [gameOver, setGameOver] = useState<GameOverType>(gameOverInitialState);
   const [correctWord, setCorrectWord] = useState<string>('');
+  const [correctLetters, setCorrectLetters] = useState<Char[]>([]);
+  const [almostLetters, setAlmostLetters] = useState<Char[]>([]);
 
   useEffect(() => {
     generateWordSet().then(({ wordSet, randomWord }) => {
@@ -105,17 +113,41 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     
     const currentWord: string = board[attemp].join("");
   
-    if (wordSet.has(currentWord)) {
-      console.log("siguiente intento:", attemp + 1);
-      setCurrentAttemp({ ...currentAttemp, attemp: attemp + 1, letterPos: 0 });
-      const newDisabledLetters = board[attemp].filter(letter => !correctWord.includes(letter));
-      const updatedDisabledLetters = new Set([...disabledLetters, ...newDisabledLetters]);
-      setDisabledLetters([...updatedDisabledLetters]);
-      console.log("Nuevas letras deshabilitados: ", newDisabledLetters);
-      console.log("Total letras deshabilitadas: ", updatedDisabledLetters);
-    } else {
+    if (!wordSet.has(currentWord)) {
       alert("No existe en la lista de palabras del juego");
+      return;
     }
+
+    console.log("siguiente intento:", attemp + 1);
+    setCurrentAttemp({ ...currentAttemp, attemp: attemp + 1, letterPos: 0 });
+
+    // Concurrencia de cada letra de la palabra real
+    const realWordMap: Record<string, number> = {};
+    for (const letter of correctWord) {
+      realWordMap[letter] = (realWordMap[letter] || 0) + 1;
+    }
+
+    const newDisabledLetters: Char[] = [];
+    board[attemp].forEach((letter, index) => {
+      if (correctWord[index] === letter) realWordMap[letter]--;
+    });
+
+    board[attemp].forEach((letter, index) => {
+      if (correctWord[index] === letter) return;
+      if (correctWord.includes(letter) && realWordMap[letter] > 0) {
+        realWordMap[letter]--;
+      } else {
+        newDisabledLetters.push(letter);
+      }
+    })
+
+    checkWord();
+
+    const updatedDisabledLetters = new Set([...disabledLetters, ...newDisabledLetters]);
+
+    setDisabledLetters([...updatedDisabledLetters]);
+    console.log("Nuevas letras deshabilitados: ", newDisabledLetters);
+    console.log("Total letras deshabilitadas: ", updatedDisabledLetters);
 
     if (currentWord === correctWord) {
       setGameOver({ finish: true, guessedWord: true });
@@ -126,11 +158,22 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
       setGameOver({ finish: true, guessedWord: false });
       return;
     }
+  };
 
-    // Deshabilitar letras
-    const newDisabledLetters = board[attemp].filter(letter => !correctWord.includes(letter));
-    const updatedDisabledLetters = new Set([...disabledLetters, ...newDisabledLetters]);
-    setDisabledLetters([...updatedDisabledLetters]);
+  const checkWord = () => {
+    const newCorrectLetters = new Set(correctLetters);
+    const newAlmostLetters = new Set(almostLetters);
+
+    board[attemp].forEach((letter, index) => {
+      if (letter === correctWord[index]) {
+        newCorrectLetters.add(letter);
+      } else if (correctWord.includes(letter)) {
+        newAlmostLetters.add(letter);
+      }
+    });
+
+    setCorrectLetters([...newCorrectLetters]);
+    setAlmostLetters([...newAlmostLetters]);
   };
 
   const resetGame = () => {
@@ -139,9 +182,32 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     setCurrentAttemp(currentAttempInitialState);
     setGameOver(gameOverInitialState);
     setDisabledLetters([]);
+    generateWordSet().then(({ wordSet, randomWord }) => {
+      setWordSet(wordSet);
+      setCorrectWord(randomWord);
+    });
+    // Reiniciar letras correctas y almost
+    setCorrectLetters([]);
+    setAlmostLetters([])
   };
 
-  const value = { board, setBoard, currentAttemp, setCurrentAttemp, nextLetter, deleteLetter, nextAttemp, correctWord, disabledLetters, gameOver, setGameOver, resetGame };
+  const value = {
+    board,
+    setBoard,
+    currentAttemp,
+    setCurrentAttemp,
+    nextLetter,
+    deleteLetter,
+    nextAttemp,
+    correctWord,
+    disabledLetters,
+    gameOver,
+    setGameOver,
+    resetGame,
+    correctLetters,
+    almostLetters,
+    checkWord
+  };
 
   return (
     <BoardContext.Provider value={value}>

@@ -1,3 +1,13 @@
+.App {
+  min-height: 32rem;
+  height: 100dvh;
+  max-height: 720px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .section__app {
   padding-block: 1rem;
 }

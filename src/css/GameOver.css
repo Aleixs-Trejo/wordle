@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .game-over__header {
@@ -18,5 +18,5 @@
 .game-over__content {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }

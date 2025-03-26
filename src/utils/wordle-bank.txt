@@ -634,6 +634,7 @@ araño
 arara
 arare
 arase
+arbol
 arcad
 arcan
 arcar
@@ -6297,6 +6298,7 @@ ratea
 ratee
 rateo
 ratio
+raton
 ratos
 rauco
 rauda
@@ -6312,6 +6314,7 @@ rayos
 razar
 razas
 razia
+razon
 reala
 reama
 reame
