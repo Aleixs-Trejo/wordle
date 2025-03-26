@@ -51,6 +51,9 @@ const Letter: React.FC<LetterProps> = ({ letterPos, attempVal }) => {
     <div
       style={{ '--delay': `${letterPos * 100}ms` } as React.CSSProperties}
       className={`flex-c-c letter ${letter ? "letter__letter" : ""} letter--${letterState}`}
+      translate="no"
+      lang="zxx"
+      data-translate="no"
     >
       {letter}
     </div>
