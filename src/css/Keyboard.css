@@ -48,6 +48,11 @@
     border-color: #63610e;
   }
 
+  &.key--error {
+    background-color: #1f1f26;
+    border-color: #1f1f26;
+  }
+
   &.keyboard__key--icon {
     min-width: 2rem;
     background-color: #dc2323;

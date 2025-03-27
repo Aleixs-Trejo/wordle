@@ -18,9 +18,9 @@ const Key: React.FC<KeyProps> = ({ keyVal, icon }) => {
     nextLetter,
     deleteLetter,
     nextAttemp,
-    disabledLetters,
     correctLetters,
-    almostLetters } = useContext(BoardContext);
+    almostLetters,
+    errorLetters } = useContext(BoardContext);
 
   const selectLetter = () => {
     if (icon?.props.alt === 'enter') {
@@ -39,6 +39,8 @@ const Key: React.FC<KeyProps> = ({ keyVal, icon }) => {
       keyClass = "key--correct";
     } else if (almostLetters.includes(keyVal)) {
       keyClass = "key--almost";
+    } else if (errorLetters.includes(keyVal)) {
+      keyClass = "key--error"
     }
   }
 
@@ -46,7 +48,6 @@ const Key: React.FC<KeyProps> = ({ keyVal, icon }) => {
     <button
       className={`flex-c-c keyboard__key ${icon ? 'keyboard__key--icon' : ''} ${keyClass}`}
       onClick={selectLetter}
-      disabled={keyVal ? disabledLetters.includes(keyVal) : false}
       translate="no"
       lang="zxx"
       data-translate="no"

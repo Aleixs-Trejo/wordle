@@ -1,5 +1,5 @@
 // React
-import { useContext } from "react";
+import { useContext, memo } from "react";
 
 // CSS
 import "./../css/Letter.css"
@@ -18,35 +18,47 @@ const Letter: React.FC<LetterProps> = ({ letterPos, attempVal }) => {
   const letter = board[attempVal][letterPos];
 
   const correctWordArray = correctWord.split('');
-  const attempWordArray = board[attempVal];
+  const attempWordArray = [...board[attempVal]];
 
   // Contar la concurrencia en la palabra correcta
   const letterCounts: Record<string, number> = {};
-  correctWordArray.forEach(char => {
+  for (const char of correctWordArray) {
     letterCounts[char] = (letterCounts[char] || 0) + 1;
-  });
+  }
 
   // Verificar letras correctas
-  const correctLetters = attempWordArray.map((char, i) => char === correctWordArray[i]);
+  /* const correctLetters = attempWordArray.map((char, i) => {
+    const isCorrect = char === correctWordArray[i];
+    if (isCorrect) letterCounts[char]--;
+    return isCorrect;
+  }); */
 
-  // Contar letras ya asignadas
-  correctLetters.forEach((isCorrect, i) => {
-    if (isCorrect) letterCounts[correctWordArray[i]]--; // Restar porque ya se usó
+  const correctLetters = new Array(attempWordArray.length).fill(false);
+  attempWordArray.forEach((char, i) => {
+    if (char === correctWordArray[i]) {
+      correctLetters[i] = true;
+      letterCounts[char]--;
+    }
   });
 
-  // Verificar el almost pa ver si se repite o non
-  const isCorrect = correctLetters[letterPos];
-  const isAlmost = !isCorrect
-    && letter !== ''
-    && correctWord.includes(letter)
-    && letterCounts[letter] > 0;
+  const almostLetters = new Array(attempWordArray.length).fill(false);
+  attempWordArray.forEach((char, i) => {
+    if (!correctLetters[i] && correctWord.includes(char) && letterCounts[char] > 0) {
+      almostLetters[i] = true;
+      letterCounts[char]--;
+    }
+  });
 
-  if (isAlmost) letterCounts[letter]--;
+  // Estao de la letraaaaa
+  const isCorrect = correctLetters[letterPos];
+  const isAlmost = almostLetters[letterPos];
 
   const letterState =
     currentAttemp.attemp > attempVal &&
     (isCorrect ? 'correct' : isAlmost ? 'almost' : 'error');
-  
+
+  console.log(letter, letterState);
+
   return (
     <div
       style={{ '--delay': `${letterPos * 100}ms` } as React.CSSProperties}
@@ -60,4 +72,4 @@ const Letter: React.FC<LetterProps> = ({ letterPos, attempVal }) => {
   );
 };
 
-export default Letter;
+export default memo(Letter);

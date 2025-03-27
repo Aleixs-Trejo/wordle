@@ -27,12 +27,12 @@ interface BoardContextType {
   deleteLetter: () => void;
   nextAttemp: () => void;
   correctWord: string;
-  disabledLetters: Char[];
   gameOver: GameOverType;
   setGameOver: React.Dispatch<React.SetStateAction<GameOverType>>;
   resetGame: () => void;
   correctLetters: Char[];
   almostLetters: Char[];
+  errorLetters: Char[];
   checkWord: () => void;
 }
 
@@ -60,12 +60,12 @@ const boardInitialState: BoardContextType = {
   deleteLetter: () => {},
   nextAttemp: () => {},
   correctWord: '',
-  disabledLetters: [],
   gameOver: gameOverInitialState,
   setGameOver: () => {},
   resetGame: () => {},
   correctLetters: [],
   almostLetters: [],
+  errorLetters: [],
   checkWord: () => {}
 };
 
@@ -75,18 +75,20 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
   const [board, setBoard] = useState<Board>(boardDefault);
   const [currentAttemp, setCurrentAttemp] = useState<CurrentAttempType>(currentAttempInitialState);
   const [wordSet, setWordSet] = useState<Set<string>>(new Set());
-  const [disabledLetters, setDisabledLetters] = useState<Char[]>([]);
   const [gameOver, setGameOver] = useState<GameOverType>(gameOverInitialState);
   const [correctWord, setCorrectWord] = useState<string>('');
   const [correctLetters, setCorrectLetters] = useState<Char[]>([]);
   const [almostLetters, setAlmostLetters] = useState<Char[]>([]);
+  const [errorLetters, setErrorLetters] = useState<Char[]>([]);
 
   useEffect(() => {
     generateWordSet().then(({ wordSet, randomWord }) => {
       setWordSet(wordSet);
       setCorrectWord(randomWord);
     });
-  }, [])
+  }, []);
+
+  useEffect(() => console.log("palabra real: ", correctWord), [correctWord]);
 
   const { attemp, letterPos } = currentAttemp;
 
@@ -127,37 +129,42 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
       realWordMap[letter] = (realWordMap[letter] || 0) + 1;
     }
 
-    const newDisabledLetters: Char[] = [];
-    const newCorrectLetters = new Set(correctLetters);
-    const newAlmostLetters = new Set(almostLetters);
+    const newCorrectLetters: Char[] = [...correctLetters];
+    const newAlmostLetters: Char[] = [...almostLetters];
+    const newErrorLetters: Char[] = [...errorLetters];
 
     // Verificar letras correctas
+    const usedIndex = new Set<number>();
     board[attemp].forEach((letter, index) => {
       if (correctWord[index] === letter) {
-        newCorrectLetters.add(letter);
+        newCorrectLetters.push(letter);
         realWordMap[letter]--;
+        usedIndex.add(index)
       }
     });
 
+    // Verificar letras casi correctas
     board[attemp].forEach((letter, index) => {
-      if (correctWord[index] !== letter) {
-        if (correctWord.includes(letter) && realWordMap[letter] > 0) {
-          newAlmostLetters.add(letter)
-          realWordMap[letter]--;
-        } else if (!newCorrectLetters.has(letter) && !newAlmostLetters.has(letter)) {
-          newDisabledLetters.push(letter);
-        }
+      if (usedIndex.has(index)) return;
+
+      if (correctWord.includes(letter) && realWordMap[letter] > 0) {
+        console.log("almosLetter: ", letter);
+        newAlmostLetters.push(letter)
+        realWordMap[letter]--;
+        console.log("totalAlmostLetters: ", newAlmostLetters);
+      } else if (!newCorrectLetters.includes(letter) && !newAlmostLetters.includes(letter)) {
+        newErrorLetters.push(letter);
       }
     })
 
     checkWord();
-    
-    const updatedDisabledLetters = new Set([...disabledLetters, ...newDisabledLetters]);
-    
-    setDisabledLetters([...updatedDisabledLetters]);
 
-    console.log("Nuevas letras deshabilitados: ", newDisabledLetters);
-    console.log("Total letras deshabilitadas: ", updatedDisabledLetters);
+    const updatedErrorLetters = new Set([...errorLetters, ...newErrorLetters]);
+  
+    setErrorLetters([...updatedErrorLetters]);
+
+    console.log("Nuevas letras deshabilitados: ", newErrorLetters);
+    console.log("Total letras deshabilitadas: ", updatedErrorLetters);
 
     if (currentWord === correctWord) {
       setGameOver({ finish: true, guessedWord: true });
@@ -188,10 +195,9 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
 
   const resetGame = () => {
     setBoard(boardDefault);
-    console.log("boardDefault", boardDefault);
     setCurrentAttemp(currentAttempInitialState);
     setGameOver(gameOverInitialState);
-    setDisabledLetters([]);
+    setErrorLetters([]);
     generateWordSet().then(({ wordSet, randomWord }) => {
       setWordSet(wordSet);
       setCorrectWord(randomWord);
@@ -210,12 +216,12 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     deleteLetter,
     nextAttemp,
     correctWord,
-    disabledLetters,
     gameOver,
     setGameOver,
     resetGame,
     correctLetters,
     almostLetters,
+    errorLetters,
     checkWord
   };
 
