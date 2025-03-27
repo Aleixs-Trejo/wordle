@@ -27,11 +27,6 @@ const Letter: React.FC<LetterProps> = ({ letterPos, attempVal }) => {
   }
 
   // Verificar letras correctas
-  /* const correctLetters = attempWordArray.map((char, i) => {
-    const isCorrect = char === correctWordArray[i];
-    if (isCorrect) letterCounts[char]--;
-    return isCorrect;
-  }); */
 
   const correctLetters = new Array(attempWordArray.length).fill(false);
   attempWordArray.forEach((char, i) => {
@@ -56,8 +51,6 @@ const Letter: React.FC<LetterProps> = ({ letterPos, attempVal }) => {
   const letterState =
     currentAttemp.attemp > attempVal &&
     (isCorrect ? 'correct' : isAlmost ? 'almost' : 'error');
-
-  console.log(letter, letterState);
 
   return (
     <div

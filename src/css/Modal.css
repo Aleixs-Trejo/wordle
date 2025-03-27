@@ -1,0 +1,4 @@
+.modal__container {
+  background-color: var(--bg-color);
+  border: thin solid #666;
+}

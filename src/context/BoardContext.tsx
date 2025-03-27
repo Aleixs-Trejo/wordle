@@ -146,10 +146,8 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
       if (usedIndex.has(index)) return;
 
       if (correctWord.includes(letter) && realWordMap[letter] > 0) {
-        console.log("almosLetter: ", letter);
         newAlmostLetters.push(letter)
         realWordMap[letter]--;
-        console.log("totalAlmostLetters: ", newAlmostLetters);
       } else if (!newCorrectLetters.includes(letter) && !newAlmostLetters.includes(letter)) {
         newErrorLetters.push(letter);
       }

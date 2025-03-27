@@ -130,19 +130,27 @@ input[type="number"]::-webkit-outer-spin-button{
   align-items: center;
 }
 
-.modal{
+.section__modal{
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.145);
   opacity: 0;
-  transition: all 0.3s ease;
   z-index: 1;
   pointer-events: none;
+  transition: all 0.3s ease;
 
   &.modal--show{
     opacity: 1;
     pointer-events: auto;
     z-index: 2;
+
+    & .modal__container {
+      transform: scale(1);
+
+      @starting-style {
+        transform: scale(0);
+      }
+    }
   }
 }
 
