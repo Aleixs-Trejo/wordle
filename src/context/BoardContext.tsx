@@ -88,8 +88,6 @@ const BoardProvider: React.FC<BoardProviderProps> = ({ children }) => {
     });
   }, []);
 
-  useEffect(() => console.log("palabra real: ", correctWord), [correctWord]);
-
   const { attemp, letterPos } = currentAttemp;
 
   const nextLetter = (keyVal: Char) => {
